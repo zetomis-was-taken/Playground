@@ -97,9 +97,7 @@ export const PopulatedSelectedClassSchema = z.object({
 
 export const PopulatedScheduleProfileSchema = z.object({
   id: z.string(),                               // ID của profile
-  name: z.string(),                             // Tên cấu hình
   score: z.number().optional(),                 // Điểm đánh giá thuật toán trả về
-  summary: z.string().optional(),               // Tóm tắt ưu/nhược điểm của lịch
   classes: z.array(PopulatedSelectedClassSchema),
   isMain: z.boolean().default(false),
 });

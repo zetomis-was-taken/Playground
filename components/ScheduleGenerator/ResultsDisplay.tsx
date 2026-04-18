@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { PopulatedScheduleProfile } from '@/src/schemas';
+import React from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import ScheduleTable from './ScheduleTable';
 
 // Mock Data bám sát cấu trúc PopulatedScheduleProfileSchema
@@ -84,7 +84,7 @@ export default function ResultsDisplay() {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Kết Quả Đề Xuất</Text>
-      
+
       <FlatList
         data={MOCK_PROFILES}
         keyExtractor={(item) => item.id}
