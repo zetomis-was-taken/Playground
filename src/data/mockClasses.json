@@ -1,0 +1,122 @@
+[
+  {
+    "subjectId": "IT3011",
+    "subjectName": "Cấu trúc dữ liệu và giải thuật",
+    "className": "CTDL&GT - L01",
+    "credits": 3,
+    "capacity": 60,
+    "enrolled": 45,
+    "cohort": 2024,
+    "location": "D3-501",
+    "schedules": [
+      {
+        "dayOfWeek": "mon",
+        "startPeriod": 1,
+        "endPeriod": 3,
+        "location": "D3-501"
+      },
+      {
+        "dayOfWeek": "wed",
+        "startPeriod": 4,
+        "endPeriod": 5,
+        "location": "D3-501"
+      }
+    ],
+    "practiceGroups": [
+      {
+        "groupId": "P01",
+        "capacity": 30,
+        "enrolled": 20,
+        "location": "B1-Phòng Máy 1",
+        "schedules": [
+          {
+            "dayOfWeek": "fri",
+            "startPeriod": 1,
+            "endPeriod": 3,
+            "location": "B1-Phòng Máy 1"
+          }
+        ]
+      },
+      {
+        "groupId": "P02",
+        "capacity": 30,
+        "enrolled": 25,
+        "location": "B1-Phòng Máy 2",
+        "schedules": [
+          {
+            "dayOfWeek": "fri",
+            "startPeriod": 4,
+            "endPeriod": 6,
+            "location": "B1-Phòng Máy 2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "subjectId": "MI2020",
+    "subjectName": "Xác suất thống kê",
+    "className": "XSTK - L02",
+    "credits": 3,
+    "capacity": 100,
+    "enrolled": 99,
+    "cohort": 2024,
+    "location": "D3-301",
+    "schedules": [
+      {
+        "dayOfWeek": "tue",
+        "startPeriod": 1,
+        "endPeriod": 3,
+        "location": "D3-301"
+      }
+    ],
+    "exerciseGroups": [
+      {
+        "groupId": "E01",
+        "capacity": 50,
+        "enrolled": 49,
+        "location": "D3-301",
+        "schedules": [
+          {
+            "dayOfWeek": "thu",
+            "startPeriod": 1,
+            "endPeriod": 2,
+            "location": "D3-301"
+          }
+        ]
+      },
+      {
+        "groupId": "E02",
+        "capacity": 50,
+        "enrolled": 50,
+        "location": "D3-302",
+        "schedules": [
+          {
+            "dayOfWeek": "thu",
+            "startPeriod": 3,
+            "endPeriod": 4,
+            "location": "D3-302"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "subjectId": "PE1010",
+    "subjectName": "Giáo dục thể chất",
+    "className": "Bóng rổ - 01",
+    "credits": 1,
+    "capacity": 40,
+    "enrolled": 40,
+    "cohort": 2024,
+    "location": "Nhà thi đấu",
+    "schedules": [
+      {
+        "dayOfWeek": "sat",
+        "startPeriod": 1,
+        "endPeriod": 3,
+        "location": "Nhà thi đấu"
+      }
+    ]
+  }
+]
