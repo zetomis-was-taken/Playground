@@ -4,21 +4,19 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false, // Yêu cầu không có header
+        tabBarActiveTintColor: Colors.iconActive,
+        tabBarInactiveTintColor: Colors.icon,
+        headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
           borderTopWidth: 1,
-          borderTopColor: colorScheme === 'dark' ? '#333' : '#eee',
-          backgroundColor: colorScheme === 'dark' ? '#000' : '#fff',
+          borderTopColor: Colors.border,
+          backgroundColor: Colors.surface,
         }
       }}>
       <Tabs.Screen

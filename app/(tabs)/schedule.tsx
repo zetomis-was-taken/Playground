@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '@/constants/theme';
 
 export default function ScheduleScreen() {
   return (
@@ -14,8 +15,8 @@ export default function ScheduleScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa' },
+  container: { flex: 1, backgroundColor: Colors.background },
   content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: '#333' },
-  subtitle: { fontSize: 16, color: '#666' }
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: Colors.primary },
+  subtitle: { fontSize: 16, color: Colors.textSecondary }
 });
