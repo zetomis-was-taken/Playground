@@ -88,6 +88,22 @@ export const ScheduleProfileSchema = z.object({
   isMain: z.boolean().default(false),           // Có phải là lịch chính đang dùng không?
 });
 
+// 5. Cấu trúc dùng để hiển thị Lịch học (Populated Data - Đã join dữ liệu lớp học)
+export const PopulatedSelectedClassSchema = z.object({
+  classInfo: ClassSchema,
+  selectedPracticeGroup: SubClassSchema.optional(),
+  selectedExerciseGroup: SubClassSchema.optional(),
+});
+
+export const PopulatedScheduleProfileSchema = z.object({
+  id: z.string(),                               // ID của profile
+  name: z.string(),                             // Tên cấu hình
+  score: z.number().optional(),                 // Điểm đánh giá thuật toán trả về
+  summary: z.string().optional(),               // Tóm tắt ưu/nhược điểm của lịch
+  classes: z.array(PopulatedSelectedClassSchema),
+  isMain: z.boolean().default(false),
+});
+
 
 // ==========================================
 // XUẤT CÁC TYPE ĐỂ DÙNG TRONG TYPESCRIPT
@@ -104,3 +120,6 @@ export type GradeComponent = z.infer<typeof GradeComponentSchema>;
 export type CourseProgress = z.infer<typeof CourseProgressSchema>;
 export type SelectedClass = z.infer<typeof SelectedClassSchema>;
 export type ScheduleProfile = z.infer<typeof ScheduleProfileSchema>;
+
+export type PopulatedSelectedClass = z.infer<typeof PopulatedSelectedClassSchema>;
+export type PopulatedScheduleProfile = z.infer<typeof PopulatedScheduleProfileSchema>;
