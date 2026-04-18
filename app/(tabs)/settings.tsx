@@ -2,12 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function DashboardScreen() {
+export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Hôm nay</Text>
-        <Text style={styles.subtitle}>Giao diện Dashboard tổng quan</Text>
+        <Text style={styles.title}>Cài đặt</Text>
+        <Text style={styles.subtitle}>Tuỳ chọn ứng dụng</Text>
       </View>
     </SafeAreaView>
   );
