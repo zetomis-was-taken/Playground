@@ -7,9 +7,7 @@ import ScheduleTable from './ScheduleTable';
 const MOCK_PROFILES: PopulatedScheduleProfile[] = [
   {
     id: '1',
-    name: 'Lịch Tối Ưu Nhất',
     score: 95,
-    summary: 'Nghỉ trọn vẹn Thứ 7, CN. Trống chiều Thứ 4.',
     isMain: false,
     classes: [
       {
@@ -47,9 +45,7 @@ const MOCK_PROFILES: PopulatedScheduleProfile[] = [
   },
   {
     id: '2',
-    name: 'Lịch Cân Bằng',
     score: 88,
-    summary: 'Dàn đều các ngày, không quá 4 tiết/ngày.',
     isMain: false,
     classes: [
       {

@@ -7,65 +7,64 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
  * @TODO_TEAM: Implement logic form thêm môn học và chọn độ khó.
  * 
  * HƯỚNG DẪN THIẾT KẾ STATE:
- * Để xử lý cấu trúc phân nhánh (nested objects) cho thuật toán, bạn nên dùng cấu trúc sau:
+ * Tính năng này cho phép người dùng cấu hình một **danh sách (array)** các môn họ muốn học.
+ * State chính sẽ là một array các Object, giúp dễ dàng map() ra UI và thêm/xóa tùy thích.
  * 
  * type Difficulty = 'Không' | 'Dễ' | 'Trung bình' | 'Cao';
  * 
  * interface SubjectRequirement {
  *   id: string; // uuid
- *   name: string; // Tên môn (VD: Toán)
+ *   name: string; // Tên môn (VD: Lập trình Web)
  *   difficulty: Difficulty;
- *   // Môn học thay thế (Logical OR)
+ *   // Môn học thay thế (Logical OR - VD: Có thể đổi sang học Mobile)
  *   alternatives: string[]; // Mảng các tên môn hoặc id môn có thể thay thế
- *   // Môn học phụ bắt buộc (Logical AND - VD: Thực hành, Bài tập)
+ *   // Môn học phụ bắt buộc (Logical AND - VD: Bắt buộc kèm Thực hành Web)
  *   corequisites: string[]; 
  * }
  * 
  * const [subjects, setSubjects] = useState<SubjectRequirement[]>([]);
  * 
- * Gợi ý UI: Dùng Modal hoặc BottomSheet để form nhập liệu không chiếm quá nhiều diện tích.
+ * Gợi ý UI: Khi bấm "+ Thêm môn học", mở một Modal/BottomSheet form để điền, sau đó push vào array `subjects`.
  */
 export default function SubjectPreferences() {
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>3. Cấu hình Môn học & Độ khó</Text>
+      <Text style={styles.sectionTitle}>3. Danh sách môn học ưu tiên</Text>
 
-      {/* Form Giả lập */}
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Tên môn học</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Nhập tên môn (VD: Cấu trúc dữ liệu)" 
-          editable={false} // STUB
-        />
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Độ khó ưu tiên</Text>
-        {/* Giả lập Dropdown */}
-        <View style={styles.dropdownStub}>
-          <Text style={styles.dropdownText}>Trung bình (▾)</Text>
+      <View style={styles.demoList}>
+        {/* Item 1 */}
+        <View style={styles.subjectCard}>
+          <View style={styles.subjectHeader}>
+            <Text style={styles.subjectName}>Giải tích 1</Text>
+            <TouchableOpacity><Text style={styles.deleteText}>✕</Text></TouchableOpacity>
+          </View>
+          <Text style={styles.subjectDetail}>Độ khó: Dễ</Text>
         </View>
-      </View>
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Môn học thay thế / Yêu cầu đi kèm</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="VD: Toán ƯD (Thay thế)" 
-          editable={false} // STUB
-        />
+        {/* Item 2 */}
+        <View style={styles.subjectCard}>
+          <View style={styles.subjectHeader}>
+            <Text style={styles.subjectName}>Lập trình Web</Text>
+            <TouchableOpacity><Text style={styles.deleteText}>✕</Text></TouchableOpacity>
+          </View>
+          <Text style={styles.subjectDetail}>Độ khó: Cao</Text>
+          <Text style={styles.subjectDetail}>Yêu cầu đi kèm: Thực hành Web</Text>
+        </View>
+
+        {/* Item 3 */}
+        <View style={styles.subjectCard}>
+          <View style={styles.subjectHeader}>
+            <Text style={styles.subjectName}>Tư tưởng Hồ Chí Minh</Text>
+            <TouchableOpacity><Text style={styles.deleteText}>✕</Text></TouchableOpacity>
+          </View>
+          <Text style={styles.subjectDetail}>Độ khó: Trung bình</Text>
+          <Text style={styles.subjectDetail}>Thay thế: Triết học Mác-Lênin</Text>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.addButton}>
         <Text style={styles.addButtonText}>+ Thêm môn học</Text>
       </TouchableOpacity>
-
-      {/* Demo List */}
-      <View style={styles.demoList}>
-        <Text style={styles.demoItem}>• Giải tích 1 (Dễ)</Text>
-        <Text style={styles.demoItem}>• Lập trình Web (Cao) + Thực hành Web</Text>
-      </View>
     </View>
   );
 }
@@ -130,14 +129,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   demoList: {
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#EEE',
+    marginBottom: 16,
   },
-  demoItem: {
-    fontSize: 14,
-    color: '#555',
+  subjectCard: {
+    backgroundColor: '#F9F9F9',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+  },
+  subjectHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
+  },
+  subjectName: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  deleteText: {
+    color: '#FF5252',
+    fontWeight: 'bold',
+    fontSize: 14,
+    paddingHorizontal: 4,
+  },
+  subjectDetail: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
   }
 });

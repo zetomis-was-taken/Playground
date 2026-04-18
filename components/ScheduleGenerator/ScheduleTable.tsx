@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { PopulatedScheduleProfile } from '@/src/schemas';
 
 interface ScheduleTableProps {
@@ -49,17 +49,27 @@ export default function ScheduleTable({ profile }: ScheduleTableProps) {
     }
   });
 
+  const handleDownload = () => {
+    // STUB: Logic tải file (vd: expo-file-system, expo-sharing)
+    Alert.alert('Tải về', 'Sẽ tải cấu hình này về máy dưới dạng JSON.');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{profile.name}</Text>
-        {profile.score !== undefined && (
-          <View style={styles.scoreBadge}>
-            <Text style={styles.scoreText}>{profile.score} điểm</Text>
-          </View>
-        )}
+        <View style={styles.headerLeft}>
+          <Text style={styles.title}>Cấu hình môn học</Text>
+          {profile.score !== undefined && (
+            <View style={styles.scoreBadge}>
+              <Text style={styles.scoreText}>{profile.score} điểm</Text>
+            </View>
+          )}
+        </View>
+        
+        <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
+          <Text style={styles.downloadText}>📥 Tải về</Text>
+        </TouchableOpacity>
       </View>
-      {profile.summary && <Text style={styles.summary}>{profile.summary}</Text>}
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.tableContainer}>
@@ -124,13 +134,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 16,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    flex: 1,
+    marginRight: 8,
   },
   scoreBadge: {
     backgroundColor: '#E8F5E9',
@@ -143,11 +158,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
-  summary: {
-    fontSize: 14,
-    color: '#666',
-    fontStyle: 'italic',
-    marginBottom: 16,
+  downloadButton: {
+    backgroundColor: '#4A90E2',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  downloadText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   tableContainer: {
     borderWidth: 1,
