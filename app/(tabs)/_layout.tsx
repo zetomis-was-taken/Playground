@@ -1,6 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
@@ -27,17 +27,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="schedule"
-        options={{
-          title: 'Lịch học',
-          tabBarIcon: ({ color }) => <Ionicons size={24} name="calendar" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="gpa"
         options={{
           title: 'Điểm số',
           tabBarIcon: ({ color }) => <Ionicons size={24} name="stats-chart" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="schedule"
+        options={{
+          title: 'Lịch học',
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="calendar" color={color} />,
         }}
       />
       <Tabs.Screen
