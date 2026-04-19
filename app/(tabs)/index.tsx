@@ -1,9 +1,9 @@
+import { Colors } from '@/constants/theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '@/constants/theme';
 
 export default function DashboardScreen() {
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
