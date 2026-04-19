@@ -77,7 +77,7 @@ export const GradeComponentSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),                             // Tên cột điểm
   weight: z.number().min(0).max(100),           // Trọng số (phần trăm 0-100)
-  score: z.number().min(0).max(10).optional(),  // Điểm đạt được (thang 10)
+  scores: z.array(z.number().min(0).max(10)).optional().default([]),  // Các lần điểm nhập, mỗi điểm thang 10
 });
 
 // 3. Quản lý Điểm cho một môn học (Course Progress / GPA tracking)
