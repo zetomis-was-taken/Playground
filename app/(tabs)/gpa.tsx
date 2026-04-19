@@ -22,6 +22,9 @@ export default function GpaScreen() {
     { id: '1', name: 'Chuyên cần', weight: '10' }
   ]);
 
+  // State to store multiple scores per column. Key is column ID.
+  const [scores, setScores] = useState<Record<string, string[]>>({});
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -72,6 +75,28 @@ export default function GpaScreen() {
 
   const removeColumn = (id: string) => {
     setGradeColumns(gradeColumns.filter(col => col.id !== id));
+  };
+
+  const handleScoreChange = (colId: string, index: number, value: string) => {
+    const colScores = scores[colId] || [''];
+    const newScores = [...colScores];
+    newScores[index] = value;
+    setScores({ ...scores, [colId]: newScores });
+  };
+
+  const addScoreInput = (colId: string) => {
+    const colScores = scores[colId] || [''];
+    setScores({ ...scores, [colId]: [...colScores, ''] });
+  };
+
+  const removeScoreInput = (colId: string, index: number) => {
+    const colScores = scores[colId] || [''];
+    if (colScores.length <= 1) {
+      setScores({ ...scores, [colId]: [''] }); // clear if last
+    } else {
+      const newScores = colScores.filter((_, i) => i !== index);
+      setScores({ ...scores, [colId]: newScores });
+    }
   };
 
   return (
@@ -130,45 +155,51 @@ export default function GpaScreen() {
           </View>
         </View>
 
-        {/* 3. Stub Nhập điểm (Table) */}
+        {/* 3. Stub Nhập điểm (Vertical) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Nhập Điểm</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.tableContainer}>
-              {/* Header Row */}
-              <View style={styles.tableHeaderRow}>
-                {gradeColumns.map((col, idx) => (
-                  <View key={idx} style={styles.tableHeaderCell}>
-                    <Text style={styles.tableHeaderText} numberOfLines={1}>
-                      {col.name || 'Chưa đặt tên'}
-                    </Text>
-                    <Text style={styles.tableHeaderSubText}>
-                      ({col.weight || '0'}%)
-                    </Text>
+          <View style={styles.verticalScoresContainer}>
+            {gradeColumns.map((col) => {
+              const colScores = scores[col.id] || [''];
+              return (
+                <View key={col.id} style={styles.verticalScoreCard}>
+                  <View style={styles.verticalScoreHeader}>
+                    <Text style={styles.verticalScoreTitle}>{col.name || 'Chưa đặt tên'}</Text>
+                    <Text style={styles.verticalScoreWeight}>{col.weight || '0'}%</Text>
                   </View>
-                ))}
-                <View style={[styles.tableHeaderCell, { backgroundColor: '#fff5f5' }]}>
-                  <Text style={styles.tableHeaderText}>Tổng</Text>
-                </View>
-              </View>
 
-              {/* Input Row */}
-              <View style={styles.tableInputRow}>
-                {gradeColumns.map((col, idx) => (
-                  <View key={idx} style={styles.tableInputCell}>
-                    <TextInput
-                      style={styles.scoreInput}
-                      placeholder="-"
-                      keyboardType="decimal-pad"
-                    />
-                  </View>
-                ))}
-                <View style={[styles.tableInputCell, { backgroundColor: '#fff5f5' }]}>
-                  <Text style={styles.totalScoreText}>0.0</Text>
+                  {colScores.map((score, sIdx) => (
+                    <View key={sIdx} style={styles.verticalInputRow}>
+                      <TextInput
+                        style={styles.verticalScoreInput}
+                        placeholder="Nhập điểm (0-10)"
+                        keyboardType="decimal-pad"
+                        value={score}
+                        onChangeText={(val) => handleScoreChange(col.id, sIdx, val)}
+                      />
+                      {colScores.length > 1 && (
+                        <TouchableOpacity
+                          style={styles.verticalRemoveBtn}
+                          onPress={() => removeScoreInput(col.id, sIdx)}
+                        >
+                          <Text style={styles.verticalRemoveBtnText}>✕</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  ))}
+
+                  <TouchableOpacity style={styles.verticalAddBtn} onPress={() => addScoreInput(col.id)}>
+                    <Text style={styles.verticalAddBtnText}>+ Thêm đầu điểm</Text>
+                  </TouchableOpacity>
                 </View>
-              </View>
+              );
+            })}
+
+            <View style={styles.verticalTotalCard}>
+              <Text style={styles.verticalTotalText}>Tổng kết môn:</Text>
+              <Text style={styles.verticalTotalScore}>0.0</Text>
             </View>
-          </ScrollView>
+          </View>
 
           <TouchableOpacity style={styles.saveButton}>
             <Text style={styles.saveButtonText}>Lưu Điểm</Text>
@@ -210,16 +241,22 @@ const styles = StyleSheet.create({
   addButton: { marginTop: 10, paddingVertical: 12, backgroundColor: '#eef5ff', borderRadius: 8, alignItems: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: Colors.primary },
   addButtonText: { color: Colors.primary, fontWeight: 'bold', fontSize: 14 },
 
-  tableContainer: { backgroundColor: '#fff', borderRadius: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, elevation: 2, overflow: 'hidden', marginBottom: 15, minWidth: '100%' },
-  tableHeaderRow: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderBottomWidth: 1, borderBottomColor: '#eee' },
-  tableHeaderCell: { width: 100, padding: 12, alignItems: 'center', borderRightWidth: 1, borderRightColor: '#eee' },
-  tableHeaderText: { fontSize: 12, fontWeight: 'bold', color: Colors.text || '#333' },
-  tableHeaderSubText: { fontSize: 10, color: Colors.textSecondary || '#666' },
-  tableInputRow: { flexDirection: 'row' },
-  tableInputCell: { width: 100, padding: 10, alignItems: 'center', justifyContent: 'center', borderRightWidth: 1, borderRightColor: '#eee' },
-  scoreInput: { width: '100%', textAlign: 'center', backgroundColor: '#f9f9f9', borderRadius: 6, paddingVertical: 8, fontSize: 16, fontWeight: 'bold', color: Colors.primary },
-  totalScoreText: { fontSize: 18, fontWeight: 'bold', color: '#e74c3c' },
+  verticalScoresContainer: { gap: 15 },
+  verticalScoreCard: { backgroundColor: '#fff', borderRadius: 12, padding: 15, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, elevation: 2 },
+  verticalScoreHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, borderBottomWidth: 1, borderBottomColor: '#f0f0f0', paddingBottom: 8 },
+  verticalScoreTitle: { fontSize: 16, fontWeight: 'bold', color: Colors.text || '#333' },
+  verticalScoreWeight: { fontSize: 14, color: Colors.primary, fontWeight: 'bold' },
+  verticalInputRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 10 },
+  verticalScoreInput: { flex: 1, backgroundColor: '#f9f9f9', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 15, fontSize: 16, color: Colors.text || '#333' },
+  verticalRemoveBtn: { backgroundColor: '#ffeeee', width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  verticalRemoveBtnText: { color: '#e74c3c', fontWeight: 'bold', fontSize: 14 },
+  verticalAddBtn: { marginTop: 5, paddingVertical: 10, alignItems: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: '#ccc', borderRadius: 8 },
+  verticalAddBtnText: { color: Colors.textSecondary || '#666', fontSize: 14, fontWeight: '500' },
 
-  saveButton: { backgroundColor: Colors.primary, paddingVertical: 14, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  verticalTotalCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff5f5', borderRadius: 12, padding: 15, marginTop: 5 },
+  verticalTotalText: { fontSize: 16, fontWeight: 'bold', color: Colors.text || '#333' },
+  verticalTotalScore: { fontSize: 24, fontWeight: 'bold', color: '#e74c3c' },
+
+  saveButton: { backgroundColor: Colors.primary, paddingVertical: 14, borderRadius: 8, alignItems: 'center', marginTop: 15 },
   saveButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' }
 });
