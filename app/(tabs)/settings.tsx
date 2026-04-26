@@ -1,14 +1,22 @@
-import { Colors } from '@/constants/theme';
-import { ClassListSchema, DisplayClass } from '@/src/schemas';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as DocumentPicker from 'expo-document-picker';
-import React, { useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from "@/constants/theme";
+import { ClassListSchema, DisplayClass } from "@/src/schemas";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as DocumentPicker from "expo-document-picker";
+import React, { useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -20,7 +28,7 @@ export default function SettingsScreen() {
     try {
       setLoading(true);
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['application/json', '*/*'],
+        type: ["application/json", "*/*"],
         copyToCacheDirectory: true,
       });
 
@@ -34,7 +42,10 @@ export default function SettingsScreen() {
       const parsedData = ClassListSchema.safeParse(jsonData);
 
       if (!parsedData.success) {
-        Alert.alert('Lỗi định dạng', 'File JSON không đúng định dạng danh sách lớp.');
+        Alert.alert(
+          "Lỗi định dạng",
+          "File JSON không đúng định dạng danh sách lớp.",
+        );
         console.error(parsedData.error);
         return;
       }
@@ -49,10 +60,10 @@ export default function SettingsScreen() {
             id: generateUUID(),
             originalSubjectId: cls.subjectId,
             originalClassId: cls.className,
-            type: 'theory',
+            type: "theory",
             subjectName: cls.subjectName,
             className: cls.className,
-            location: cls.location || 'Chưa rõ',
+            location: cls.location || "Chưa rõ",
             schedules: cls.schedules,
           });
         }
@@ -63,10 +74,10 @@ export default function SettingsScreen() {
               id: generateUUID(),
               originalSubjectId: cls.subjectId,
               originalClassId: group.groupId,
-              type: 'practice',
+              type: "practice",
               subjectName: cls.subjectName,
               className: group.groupId,
-              location: group.location || cls.location || 'Chưa rõ',
+              location: group.location || cls.location || "Chưa rõ",
               schedules: group.schedules,
             });
           });
@@ -78,21 +89,27 @@ export default function SettingsScreen() {
               id: generateUUID(),
               originalSubjectId: cls.subjectId,
               originalClassId: group.groupId,
-              type: 'exercise',
+              type: "exercise",
               subjectName: cls.subjectName,
               className: group.groupId,
-              location: group.location || cls.location || 'Chưa rõ',
+              location: group.location || cls.location || "Chưa rõ",
               schedules: group.schedules,
             });
           });
         }
       });
 
-      await AsyncStorage.setItem('@display_classes', JSON.stringify(displayClasses));
-      Alert.alert('Thành công', `Đã lưu ${displayClasses.length} lớp học (bao gồm lý thuyết, thực hành, bài tập)!`);
+      await AsyncStorage.setItem(
+        "@display_classes",
+        JSON.stringify(displayClasses),
+      );
+      Alert.alert(
+        "Thành công",
+        `Đã lưu ${displayClasses.length} lớp học (bao gồm lý thuyết, thực hành, bài tập)!`,
+      );
     } catch (error) {
       console.error(error);
-      Alert.alert('Lỗi', 'Không thể đọc hoặc parse file.');
+      Alert.alert("Lỗi", "Không thể đọc hoặc parse file.");
     } finally {
       setLoading(false);
     }
@@ -104,7 +121,11 @@ export default function SettingsScreen() {
         <Text style={styles.title}>Cài đặt</Text>
         <Text style={styles.subtitle}>Tuỳ chọn ứng dụng</Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleUpload} disabled={loading}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleUpload}
+          disabled={loading}
+        >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
@@ -118,20 +139,30 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 10, color: Colors.primary },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: Colors.primary,
+  },
   subtitle: { fontSize: 16, color: Colors.textSecondary, marginBottom: 40 },
   button: {
     backgroundColor: Colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
-  }
+    fontWeight: "600",
+  },
 });
