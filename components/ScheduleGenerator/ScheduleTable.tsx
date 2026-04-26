@@ -1,57 +1,125 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { PopulatedScheduleProfile } from '@/src/schemas';
+import { PopulatedScheduleProfile } from "@/src/schemas";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
+import React from "react";
+import {
+    Alert,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 interface ScheduleTableProps {
   profile: PopulatedScheduleProfile;
 }
 
 export default function ScheduleTable({ profile }: ScheduleTableProps) {
-  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+  const days = ["mon", "tue", "wed", "thu", "fri", "sat"] as const;
   const periods = Array.from({ length: 10 }, (_, i) => i + 1);
 
   const dayLabels: Record<string, string> = {
-    mon: 'T2', tue: 'T3', wed: 'T4', thu: 'T5', fri: 'T6', sat: 'T7'
+    mon: "T2",
+    tue: "T3",
+    wed: "T4",
+    thu: "T5",
+    fri: "T6",
+    sat: "T7",
   };
 
   // grid[day][period] = string (Mã lớp/Tên môn)
-  const grid: Record<string, Record<number, { name: string; type: string; color: string }>> = {};
-  days.forEach(d => { grid[d] = {}; });
+  const grid: Record<
+    string,
+    Record<number, { name: string; type: string; color: string }>
+  > = {};
+  days.forEach((d) => {
+    grid[d] = {};
+  });
 
-  const colors = ['#E3F2FD', '#E8F5E9', '#FFF3E0', '#F3E5F5', '#FFEBEE', '#E0F7FA'];
+  const colors = [
+    "#E3F2FD",
+    "#E8F5E9",
+    "#FFF3E0",
+    "#F3E5F5",
+    "#FFEBEE",
+    "#E0F7FA",
+  ];
 
   profile.classes.forEach((pc, index) => {
     const color = colors[index % colors.length];
 
     // Lịch lý thuyết
-    pc.classInfo.schedules.forEach(s => {
+    pc.classInfo.schedules.forEach((s) => {
       for (let p = s.startPeriod; p <= s.endPeriod; p++) {
-        grid[s.dayOfWeek][p] = { name: pc.classInfo.subjectName, type: 'LT', color };
+        grid[s.dayOfWeek][p] = {
+          name: pc.classInfo.subjectName,
+          type: "LT",
+          color,
+        };
       }
     });
 
     // Lịch thực hành
     if (pc.selectedPracticeGroup) {
-      pc.selectedPracticeGroup.schedules.forEach(s => {
+      pc.selectedPracticeGroup.schedules.forEach((s) => {
         for (let p = s.startPeriod; p <= s.endPeriod; p++) {
-          grid[s.dayOfWeek][p] = { name: pc.classInfo.subjectName, type: 'TH', color };
+          grid[s.dayOfWeek][p] = {
+            name: pc.classInfo.subjectName,
+            type: "TH",
+            color,
+          };
         }
       });
     }
 
     // Lịch bài tập
     if (pc.selectedExerciseGroup) {
-      pc.selectedExerciseGroup.schedules.forEach(s => {
+      pc.selectedExerciseGroup.schedules.forEach((s) => {
         for (let p = s.startPeriod; p <= s.endPeriod; p++) {
-          grid[s.dayOfWeek][p] = { name: pc.classInfo.subjectName, type: 'BT', color };
+          grid[s.dayOfWeek][p] = {
+            name: pc.classInfo.subjectName,
+            type: "BT",
+            color,
+          };
         }
       });
     }
   });
 
-  const handleDownload = () => {
-    // STUB: Logic tải file (vd: expo-file-system, expo-sharing)
-    Alert.alert('Tải về', 'Sẽ tải cấu hình này về máy dưới dạng JSON.');
+  const handleDownload = async () => {
+    try {
+      const jsonStr = JSON.stringify(profile, null, 2);
+      const filename = `schedule-${profile.id}.json`;
+
+      if (Platform.OS === "web") {
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } else {
+        const fileUri = `${FileSystem.documentDirectory}${filename}`;
+        await FileSystem.writeAsStringAsync(fileUri, jsonStr, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+
+        const canShare = await Sharing.isAvailableAsync();
+        if (canShare) {
+          await Sharing.shareAsync(fileUri);
+        } else {
+          Alert.alert("Lỗi", "Thiết bị của bạn không hỗ trợ chia sẻ/tải file.");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Lỗi", "Không thể tải file.");
+    }
   };
 
   return (
@@ -65,8 +133,11 @@ export default function ScheduleTable({ profile }: ScheduleTableProps) {
             </View>
           )}
         </View>
-        
-        <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
+
+        <TouchableOpacity
+          style={styles.downloadButton}
+          onPress={handleDownload}
+        >
           <Text style={styles.downloadText}>📥 Tải về</Text>
         </TouchableOpacity>
       </View>
@@ -76,7 +147,7 @@ export default function ScheduleTable({ profile }: ScheduleTableProps) {
           {/* Header Row */}
           <View style={styles.row}>
             <View style={[styles.cell, styles.headerCell, styles.cornerCell]} />
-            {days.map(d => (
+            {days.map((d) => (
               <View key={d} style={[styles.cell, styles.headerCell]}>
                 <Text style={styles.headerText}>{dayLabels[d]}</Text>
               </View>
@@ -84,24 +155,28 @@ export default function ScheduleTable({ profile }: ScheduleTableProps) {
           </View>
 
           {/* Body Rows */}
-          {periods.map(period => (
+          {periods.map((period) => (
             <View key={period} style={styles.row}>
               <View style={[styles.cell, styles.headerCell, styles.periodCell]}>
                 <Text style={styles.headerText}>T{period}</Text>
               </View>
-              {days.map(d => {
+              {days.map((d) => {
                 const cellData = grid[d][period];
                 return (
-                  <View 
-                    key={`${d}-${period}`} 
+                  <View
+                    key={`${d}-${period}`}
                     style={[
-                      styles.cell, 
-                      cellData ? { backgroundColor: cellData.color } : styles.emptyCell
+                      styles.cell,
+                      cellData
+                        ? { backgroundColor: cellData.color }
+                        : styles.emptyCell,
                     ]}
                   >
                     {cellData && (
                       <>
-                        <Text style={styles.cellTitle} numberOfLines={2}>{cellData.name}</Text>
+                        <Text style={styles.cellTitle} numberOfLines={2}>
+                          {cellData.name}
+                        </Text>
                         <Text style={styles.cellType}>{cellData.type}</Text>
                       </>
                     )}
@@ -118,81 +193,81 @@ export default function ScheduleTable({ profile }: ScheduleTableProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 6,
-    borderLeftColor: '#4CAF50',
+    borderLeftColor: "#4CAF50",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginRight: 8,
   },
   scoreBadge: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: "#E8F5E9",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   scoreText: {
-    color: '#4CAF50',
-    fontWeight: 'bold',
+    color: "#4CAF50",
+    fontWeight: "bold",
     fontSize: 12,
   },
   downloadButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: "#4A90E2",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
   },
   downloadText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   tableContainer: {
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: "#E0E0E0",
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   cell: {
     width: 80,
     height: 50,
     borderRightWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 2,
   },
   emptyCell: {
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
   },
   headerCell: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
   },
   cornerCell: {
     width: 40,
@@ -202,18 +277,18 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#555',
+    fontWeight: "bold",
+    color: "#555",
   },
   cellTitle: {
     fontSize: 10,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
   },
   cellType: {
     fontSize: 9,
-    color: '#666',
+    color: "#666",
     marginTop: 2,
-  }
+  },
 });
